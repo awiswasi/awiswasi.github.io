@@ -195,6 +195,45 @@
             margin: 0;
             opacity: 0.75;
         }
+
+        .final-result-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .final-result-video {
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+            background: white;
+            padding: 1rem;
+        }
+        
+        .final-result-video video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+            border-radius: 1px;
+        }
+        
+        .final-result-content p {
+            margin-bottom: 1.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .final-result-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .final-result-video {
+                max-width: 350px;
+                margin: 0 auto;
+            }
+        }
         
         .state-flow {
             display: flex;
@@ -404,6 +443,45 @@
         
         .concept-text p {
             margin-bottom: 1.25rem;
+        }
+
+        .state-machine-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .state-machine-video {
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+            background: white;
+            padding: 1rem;
+        }
+        
+        .state-machine-video video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+            border-radius: 1px;
+        }
+        
+        .state-machine-content p {
+            margin-bottom: 1.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .state-machine-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .state-machine-video {
+                max-width: 350px;
+                margin: 0 auto;
+            }
         }
         
         @media (max-width: 768px) {
@@ -618,30 +696,33 @@
         
         <section>
             <h2>State Machine Implementation</h2>
-            <p>The core of the controller is a deterministic finite state machine with explicit transitions and comprehensive fault handling. Each state has clear entry and exit conditions, ensuring predictable and auditable behavior throughout the sterilization cycle.</p>
-            
-            <div class="state-flow">
-                <div class="state">IDLE</div>
-                <span class="arrow">→</span>
-                <div class="state">PRECHECK</div>
-                <span class="arrow">→</span>
-                <div class="state">HEAT-UP</div>
-                <span class="arrow">→</span>
-                <div class="state">STERILIZE</div>
-                <span class="arrow">→</span>
-                <div class="state">COOL-DOWN</div>
-                <span class="arrow">→</span>
-                <div class="state">COMPLETE</div>
-            </div>
-
-            <p>The FAULT state can be entered from any operational state when safety violations are detected—such as door opening during a cycle or sensor communication failures. This defensive approach ensures the system fails safely and provides clear feedback about what went wrong.</p>
-
-            <div class="video-container">
-                <video controls poster="assets/thumbnail.jpg">
-                    <source src="assets/vid2.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-                <p class="video-caption">Door interlock emergency stop demonstration during active cycle</p>
+            <div class="state-machine-layout">
+                <div class="state-machine-video">
+                    <video controls poster="assets/thumbnail.jpg">
+                        <source src="assets/vid2.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p class="video-caption">Door interlock emergency stop demonstration during active cycle</p>
+                </div>
+                <div class="state-machine-content">
+                    <p>The core of the controller is a deterministic finite state machine with explicit transitions and comprehensive fault handling. Each state has clear entry and exit conditions, ensuring predictable and auditable behavior throughout the sterilization cycle.</p>
+                    
+                    <div class="state-flow">
+                        <div class="state">IDLE</div>
+                        <span class="arrow">→</span>
+                        <div class="state">PRECHECK</div>
+                        <span class="arrow">→</span>
+                        <div class="state">HEAT-UP</div>
+                        <span class="arrow">→</span>
+                        <div class="state">STERILIZE</div>
+                        <span class="arrow">→</span>
+                        <div class="state">COOL-DOWN</div>
+                        <span class="arrow">→</span>
+                        <div class="state">COMPLETE</div>
+                    </div>
+        
+                    <p>The FAULT state can be entered from any operational state when safety violations are detected—such as door opening during a cycle or sensor communication failures. This defensive approach ensures the system fails safely and provides clear feedback about what went wrong.</p>
+                </div>
             </div>
         </section>
         
@@ -649,18 +730,21 @@
         
         <section>
             <h2>Final Result</h2>
-            <p>The completed system successfully demonstrates production-grade embedded design principles applicable to medical devices and industrial control systems. It features real-time task scheduling with FreeRTOS, deterministic state machine execution, environmental sensor integration with validation, multi-MCU communication over UART, and hardware-enforced safety interlocks with immediate shutdown capability.</p>
-            
-            <p>While the heating profile is simulated in software for safety and repeatability, the system validates live sensor data and provides a realistic foundation for further development. Future enhancements could include MQTT logging, SD card audit trails, OTA firmware updates, and integration with a Linux-based companion system for advanced analytics.</p>
+            <div class="final-result-layout">
+                <div class="final-result-video">
+                    <video controls poster="assets/thumbnail.jpg">
+                        <source src="assets/vid1.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <p class="video-caption">System demonstration: complete sterilization cycle from IDLE to COMPLETE state</p>
+                </div>
+                <div class="final-result-content">
+                    <p>The completed system successfully demonstrates production-grade embedded design principles applicable to medical devices and industrial control systems. It features real-time task scheduling with FreeRTOS, deterministic state machine execution, environmental sensor integration with validation, multi-MCU communication over UART, and hardware-enforced safety interlocks with immediate shutdown capability.</p>
+                    
+                    <p>While the heating profile is simulated in software for safety and repeatability, the system validates live sensor data and provides a realistic foundation for further development. Future enhancements could include MQTT logging, SD card audit trails, OTA firmware updates, and integration with a Linux-based companion system for advanced analytics.</p>
+                </div>
+            </div>
         </section>
-
-        <div class="video-container">
-            <video controls poster="assets/thumbnail.jpg">
-                <source src="assets/vid1.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <p class="video-caption">System demonstration: complete sterilization cycle from IDLE to COMPLETE state</p>
-        </div>
         
         <div class="cta">
             <h3>View Project Repository</h3>
