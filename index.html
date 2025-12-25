@@ -227,6 +227,42 @@
             color: var(--diagnostic-blue);
             opacity: 0.4;
         }
+
+        .prototype-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .prototype-image {
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+        }
+        
+        .prototype-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+        }
+        
+        .prototype-content p {
+            margin-bottom: 1.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .prototype-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .prototype-image {
+                max-width: 480px;
+                margin: 0 auto;
+            }
+        }
         
         .tech-list {
             display: grid;
@@ -345,6 +381,42 @@
                 grid-column: span 1;
             }
         }
+
+        .concept-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .header-image-side {
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+        }
+        
+        .header-image-side img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+        }
+        
+        .concept-text p {
+            margin-bottom: 1.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .concept-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .header-image-side {
+                max-width: 480px;
+                margin: 0 auto;
+            }
+        }
         
         footer {
             text-align: center;
@@ -379,6 +451,42 @@
                 opacity: 0.5;
             }
         }
+
+        .components-layout {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 3rem;
+            align-items: start;
+        }
+        
+        .components-image {
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+        }
+        
+        .components-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+        }
+        
+        .components-content p {
+            margin-bottom: 1.25rem;
+        }
+        
+        @media (max-width: 768px) {
+            .components-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .components-image {
+                max-width: 480px;
+                margin: 0 auto;
+            }
+        }
         
         @media (max-width: 768px) {
             h1 {
@@ -409,55 +517,62 @@
             <div class="status">Active Development</div>
             <h1>ESP32 Sterilization Monitor</h1>
             <p class="subtitle">Medical-grade embedded system demonstrating real-time control, safety interlocks, and deterministic state machine design.</p>
-            <div class="header-image">
-                <img src="assets/img1.jpeg" alt="ESP32 Sterilization Monitor Hardware">
-            </div>
         </header>
         
         <div class="divider"></div>
         
         <section>
             <h2>Project Concept</h2>
-            <p>I wanted to build a sterilization cycle controller that demonstrates production-style embedded system design principles used in medical devices. The goal was to create a dual-MCU architecture with proper separation between safety-critical control logic and user interface components—mirroring the fault isolation strategies found in certified medical equipment.</p>
-            
-            <p>The system would implement FreeRTOS task management, deterministic state machine control, real environmental sensing, hardware safety interlocks, and UART-based telemetry—all fundamental concepts in safety-critical embedded applications.</p>
+            <div class="concept-layout">
+                <div class="header-image-side">
+                    <img src="assets/img1.jpeg" alt="ESP32 Sterilization Monitor Hardware">
+                </div>
+                <div class="concept-text">
+                    <p>I wanted to build a sterilization cycle controller that demonstrates production-style embedded system design principles used in medical devices. The goal was to create a dual-MCU architecture with proper separation between safety-critical control logic and user interface components—mirroring the fault isolation strategies found in certified medical equipment.</p>
+                    
+                    <p>The system would implement FreeRTOS task management, deterministic state machine control, real environmental sensing, hardware safety interlocks, and UART-based telemetry—all fundamental concepts in safety-critical embedded applications.</p>
+                </div>
+            </div>
         </section>
         
         <div class="divider"></div>
         
         <section>
             <h2>Components</h2>
-            <p>I started by gathering the components needed for both the controller unit and the user interface subsystem. The controller would handle all safety-critical operations, while a separate ESP32 display module would provide real-time visualization without impacting control performance.</p>
-            
-            <div class="content-image">
-                <img src="assets/img2.jpeg" alt="Project components laid out">
-                <p class="image-caption">All components for the dual-MCU sterilization monitor</p>
-            </div>
-
-            <div class="tech-list">
-                <div class="tech-item">
-                    <span class="tech-label">Controller</span>
-                    <span class="tech-desc">ESP32-S3-WROOM-1 for state machine and sensor management</span>
+            <div class="components-layout">
+                <div class="components-image">
+                    <img src="assets/img2.jpeg" alt="Project components laid out">
+                    <p class="image-caption">All components for the dual-MCU sterilization monitor</p>
                 </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">UI Module</span>
-                    <span class="tech-desc">ESP32 2.8" display board for real-time visualization</span>
-                </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">Sensors</span>
-                    <span class="tech-desc">BME280 I²C temperature and humidity sensor</span>
-                </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">Safety</span>
-                    <span class="tech-desc">Normally-closed door switch, relay module, status LEDs, piezo buzzer</span>
-                </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">Control</span>
-                    <span class="tech-desc">Momentary push button for cycle initiation</span>
+                <div class="components-content">
+                    <p>I started by gathering the components needed for both the controller unit and the user interface subsystem. The controller would handle all safety-critical operations, while a separate ESP32 display module would provide real-time visualization without impacting control performance.</p>
+                    
+                    <div class="tech-list">
+                        <div class="tech-item">
+                            <span class="tech-label">Controller</span>
+                            <span class="tech-desc">ESP32-S3-WROOM-1 for state machine and sensor management</span>
+                        </div>
+                        
+                        <div class="tech-item">
+                            <span class="tech-label">UI Module</span>
+                            <span class="tech-desc">ESP32 2.8" display board for real-time visualization</span>
+                        </div>
+                        
+                        <div class="tech-item">
+                            <span class="tech-label">Sensors</span>
+                            <span class="tech-desc">BME280 I²C temperature and humidity sensor</span>
+                        </div>
+                        
+                        <div class="tech-item">
+                            <span class="tech-label">Safety</span>
+                            <span class="tech-desc">Normally-closed door switch, relay module, status LEDs, piezo buzzer</span>
+                        </div>
+                        
+                        <div class="tech-item">
+                            <span class="tech-label">Control</span>
+                            <span class="tech-desc">Momentary push button for cycle initiation</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -466,13 +581,16 @@
         
         <section>
             <h2>Building the Prototype</h2>
-            <p>I assembled the first prototype on a breadboard, connecting the ESP32-S3 to the BME280 sensor over I²C, wiring up the relay module for heater control simulation, and integrating the safety interlock switch. The status LEDs and buzzer were connected to provide immediate visual and audible feedback based on the system state.</p>
-            
-            <p>The architecture uses a strict separation of concerns—the controller ESP32-S3 runs all safety-critical tasks including the state machine, sensor reading, interlock monitoring, and output control. Meanwhile, the display ESP32 receives structured telemetry over UART and focuses solely on visualization.</p>
-
-            <div class="content-image">
-                <img src="assets/img3.jpeg" alt="First prototype assembly">
-                <p class="image-caption">Initial breadboard prototype with ESP32-S3 controller</p>
+            <div class="prototype-layout">
+                <div class="prototype-image">
+                    <img src="assets/img3.jpeg" alt="First prototype assembly">
+                    <p class="image-caption">Initial breadboard prototype with ESP32-S3 controller</p>
+                </div>
+                <div class="prototype-content">
+                    <p>I assembled the first prototype on a breadboard, connecting the ESP32-S3 to the BME280 sensor over I²C, wiring up the relay module for heater control simulation, and integrating the safety interlock switch. The status LEDs and buzzer were connected to provide immediate visual and audible feedback based on the system state.</p>
+                    
+                    <p>The architecture uses a strict separation of concerns—the controller ESP32-S3 runs all safety-critical tasks including the state machine, sensor reading, interlock monitoring, and output control. Meanwhile, the display ESP32 receives structured telemetry over UART and focuses solely on visualization.</p>
+                </div>
             </div>
         </section>
         
