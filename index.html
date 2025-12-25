@@ -82,12 +82,56 @@
             border-radius: 2px;
             overflow: hidden;
             box-shadow: 0 4px 16px var(--shadow-soft);
-            max-width: 600px;
+            max-width: 480px;
             margin-left: auto;
             margin-right: auto;
         }
 
         .header-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+        }
+
+        .content-image {
+            margin: 2rem auto;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+            max-width: 480px;
+        }
+
+        .content-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+        }
+
+        .image-caption {
+            margin-top: 0.75rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--diagnostic-blue);
+            text-align: center;
+            opacity: 0.8;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .image-grid-item {
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+        }
+
+        .image-grid-item img {
             width: 100%;
             height: auto;
             display: block;
@@ -220,7 +264,7 @@
             box-shadow: 0 4px 16px var(--shadow-soft);
             background: white;
             padding: 1rem;
-            max-width: 600px;
+            max-width: 480px;
         }
 
         .video-container video {
@@ -342,7 +386,8 @@
             }
 
             .header-image,
-            .video-container {
+            .video-container,
+            .content-image {
                 max-width: 100%;
             }
         }
@@ -362,28 +407,47 @@
         <div class="divider"></div>
         
         <section>
-            <h2>Overview</h2>
-            <p>A sterilization cycle controller built on dual ESP32 microcontrollers, implementing production-style safety protocols, FreeRTOS task management, and clean separation between control logic and user interface—principles fundamental to certified medical devices.</p>
+            <h2>Project Concept</h2>
+            <p>I wanted to build a sterilization cycle controller that demonstrates production-style embedded system design principles used in medical devices. The goal was to create a dual-MCU architecture with proper separation between safety-critical control logic and user interface components—mirroring the fault isolation strategies found in certified medical equipment.</p>
             
-            <div class="grid">
-                <div class="card">
-                    <h3>Dual-MCU Architecture</h3>
-                    <p>Separate control and UI subsystems for fault isolation and reliability.</p>
+            <p>The system would implement FreeRTOS task management, deterministic state machine control, real environmental sensing, hardware safety interlocks, and UART-based telemetry—all fundamental concepts in safety-critical embedded applications.</p>
+        </section>
+        
+        <div class="divider"></div>
+        
+        <section>
+            <h2>Components</h2>
+            <p>I started by gathering the components needed for both the controller unit and the user interface subsystem. The controller would handle all safety-critical operations, while a separate ESP32 display module would provide real-time visualization without impacting control performance.</p>
+            
+            <div class="content-image">
+                <img src="assets/img2.jpeg" alt="Project components laid out">
+                <p class="image-caption">All components for the dual-MCU sterilization monitor</p>
+            </div>
+
+            <div class="tech-list">
+                <div class="tech-item">
+                    <span class="tech-label">Controller</span>
+                    <span class="tech-desc">ESP32-S3-WROOM-1 for state machine and sensor management</span>
                 </div>
                 
-                <div class="card">
-                    <h3>FreeRTOS</h3>
-                    <p>Real-time task scheduling with priority-based execution for safety-critical operations.</p>
+                <div class="tech-item">
+                    <span class="tech-label">UI Module</span>
+                    <span class="tech-desc">ESP32 2.8" display board for real-time visualization</span>
                 </div>
                 
-                <div class="card">
-                    <h3>Safety Interlocks</h3>
-                    <p>Hardware-enforced door monitoring with immediate shutdown capability.</p>
+                <div class="tech-item">
+                    <span class="tech-label">Sensors</span>
+                    <span class="tech-desc">BME280 I²C temperature and humidity sensor</span>
                 </div>
                 
-                <div class="card">
-                    <h3>Environmental Sensing</h3>
-                    <p>BME280 I²C sensor for temperature and humidity validation.</p>
+                <div class="tech-item">
+                    <span class="tech-label">Safety</span>
+                    <span class="tech-desc">Normally-closed door switch, relay module, status LEDs, piezo buzzer</span>
+                </div>
+                
+                <div class="tech-item">
+                    <span class="tech-label">Control</span>
+                    <span class="tech-desc">Momentary push button for cycle initiation</span>
                 </div>
             </div>
         </section>
@@ -391,8 +455,42 @@
         <div class="divider"></div>
         
         <section>
-            <h2>State Machine</h2>
-            <p>The controller implements a deterministic finite state machine with explicit transitions and comprehensive fault handling.</p>
+            <h2>Building the Prototype</h2>
+            <p>I assembled the first prototype on a breadboard, connecting the ESP32-S3 to the BME280 sensor over I²C, wiring up the relay module for heater control simulation, and integrating the safety interlock switch. The status LEDs and buzzer were connected to provide immediate visual and audible feedback based on the system state.</p>
+            
+            <p>The architecture uses a strict separation of concerns—the controller ESP32-S3 runs all safety-critical tasks including the state machine, sensor reading, interlock monitoring, and output control. Meanwhile, the display ESP32 receives structured telemetry over UART and focuses solely on visualization.</p>
+
+            <div class="content-image">
+                <img src="assets/img3.jpeg" alt="First prototype assembly">
+                <p class="image-caption">Initial breadboard prototype with ESP32-S3 controller</p>
+            </div>
+        </section>
+        
+        <div class="divider"></div>
+        
+        <section>
+            <h2>Testing & Integration</h2>
+            <p>With the hardware assembled, I began developing the firmware using ESP-IDF and FreeRTOS. The controller firmware implements five main tasks with appropriate priority levels: cycle control for the state machine, sensor task for I²C communication, safety handler for interlock monitoring, output control for relay and indicators, and UART telemetry for UI updates.</p>
+
+            <p>The display module required its own firmware to receive and parse the UART telemetry stream. I developed a simple protocol to transmit state, temperature, humidity, and timing information at regular intervals. The display shows the current cycle state, live sensor readings, and elapsed time—providing a clean interface without impacting the controller's real-time performance.</p>
+
+            <div class="image-grid">
+                <div class="image-grid-item">
+                    <img src="assets/img3.jpeg" alt="Testing the controller hardware">
+                    <p class="image-caption">Controller unit during testing</p>
+                </div>
+                <div class="image-grid-item">
+                    <img src="assets/img4.jpeg" alt="Display firmware running">
+                    <p class="image-caption">Display ESP32 showing telemetry data</p>
+                </div>
+            </div>
+        </section>
+        
+        <div class="divider"></div>
+        
+        <section>
+            <h2>State Machine Implementation</h2>
+            <p>The core of the controller is a deterministic finite state machine with explicit transitions and comprehensive fault handling. Each state has clear entry and exit conditions, ensuring predictable and auditable behavior throughout the sterilization cycle.</p>
             
             <div class="state-flow">
                 <div class="state">IDLE</div>
@@ -407,48 +505,17 @@
                 <span class="arrow">→</span>
                 <div class="state">COMPLETE</div>
             </div>
+
+            <p>The FAULT state can be entered from any operational state when safety violations are detected—such as door opening during a cycle or sensor communication failures. This defensive approach ensures the system fails safely and provides clear feedback about what went wrong.</p>
         </section>
         
         <div class="divider"></div>
         
         <section>
-            <h2>Technical Implementation</h2>
+            <h2>Final Result</h2>
+            <p>The completed system successfully demonstrates production-grade embedded design principles applicable to medical devices and industrial control systems. It features real-time task scheduling with FreeRTOS, deterministic state machine execution, environmental sensor integration with validation, multi-MCU communication over UART, and hardware-enforced safety interlocks with immediate shutdown capability.</p>
             
-            <div class="tech-list">
-                <div class="tech-item">
-                    <span class="tech-label">Controller</span>
-                    <span class="tech-desc">ESP32-S3 handling state machine, sensor I²C, relay control, and safety monitoring</span>
-                </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">UI Module</span>
-                    <span class="tech-desc">Dedicated ESP32 display receiving UART telemetry for real-time visualization</span>
-                </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">Sensors</span>
-                    <span class="tech-desc">BME280 temperature/humidity sensor with health validation</span>
-                </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">Safety</span>
-                    <span class="tech-desc">Normally-closed door interlock, watchdog timers, defensive state logic</span>
-                </div>
-                
-                <div class="tech-item">
-                    <span class="tech-label">Firmware</span>
-                    <span class="tech-desc">ESP-IDF, FreeRTOS, static memory allocation, modular task architecture</span>
-                </div>
-            </div>
-        </section>
-        
-        <div class="divider"></div>
-        
-        <section>
-            <h2>Key Features</h2>
-            <p>Real-time embedded design with FreeRTOS task management and priority scheduling. Deterministic state machine implementation with explicit transitions and defensive programming. Environmental sensor integration over I²C with validation and fault detection. UART-based multi-MCU communication for control/UI separation. Hardware-enforced safety interlocks with immediate shutdown capability.</p>
-            
-            <p>The system demonstrates production-grade embedded design principles applicable to medical devices, industrial control systems, and other safety-critical applications.</p>
+            <p>While the heating profile is simulated in software for safety and repeatability, the system validates live sensor data and provides a realistic foundation for further development. Future enhancements could include MQTT logging, SD card audit trails, OTA firmware updates, and integration with a Linux-based companion system for advanced analytics.</p>
         </section>
 
         <div class="video-container">
