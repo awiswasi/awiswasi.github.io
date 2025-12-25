@@ -335,6 +335,16 @@
             background: transparent;
             color: white;
         }
+
+        .image-grid-large {
+            grid-column: span 2;
+        }
+        
+        @media (max-width: 768px) {
+            .image-grid-large {
+                grid-column: span 1;
+            }
+        }
         
         footer {
             text-align: center;
@@ -474,16 +484,16 @@
 
             <p>The display module required its own firmware to receive and parse the UART telemetry stream. I developed a simple protocol to transmit state, temperature, humidity, and timing information at regular intervals. The display shows the current cycle state, live sensor readings, and elapsed time—providing a clean interface without impacting the controller's real-time performance.</p>
 
-            <div class="image-grid">
-                <div class="image-grid-item">
-                    <img src="assets/img6.jpeg" alt="Testing the controller hardware">
-                    <p class="image-caption">Building and flashing firmware to display's ESP32</p>
-                </div>
-                <div class="image-grid-item">
-                    <img src="assets/img4.jpeg" alt="Display firmware running">
-                    <p class="image-caption">Testing display firmware</p>
-                </div>
+        <div class="image-grid">
+            <div class="image-grid-item image-grid-large">
+                <img src="assets/img6.jpeg" alt="Testing the controller hardware">
+                <p class="image-caption">Building and flashing firmware to display's ESP32</p>
             </div>
+            <div class="image-grid-item">
+                <img src="assets/img4.jpeg" alt="Display firmware running">
+                <p class="image-caption">Testing display firmware</p>
+            </div>
+        </div>
         </section>
         
         <div class="divider"></div>
