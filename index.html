@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sterilization Cycle Monitor with ESP32-S3</title>
+    <title>ESP32 Sterilization Monitor</title>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Crimson+Pro:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -257,6 +257,50 @@
             opacity: 0.4;
         }
         
+        .header-image {
+            margin-top: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+        }
+
+        .header-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+        }
+
+        .video-container {
+            margin: 3rem auto;
+            max-width: 600px;
+            border-radius: 2px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px var(--shadow-soft);
+            background: white;
+            padding: 1rem;
+        }
+
+        .video-container video {
+            width: 100%;
+            height: auto;
+            display: block;
+            border: 1px solid var(--sterile-gray);
+            border-radius: 1px;
+        }
+
+        .video-caption {
+            margin-top: 1rem;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--diagnostic-blue);
+            text-align: center;
+            opacity: 0.8;
+        }
+        
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -296,6 +340,11 @@
                 transform: rotate(90deg);
                 align-self: center;
             }
+
+            .header-image,
+            .video-container {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -305,9 +354,6 @@
             <div class="status">Active Development</div>
             <h1>ESP32 Sterilization Monitor</h1>
             <p class="subtitle">Medical-grade embedded system demonstrating real-time control, safety interlocks, and deterministic state machine design.</p>
-            <div class="header-image">
-                <img src="assets/img1.jpeg" alt="ESP32 Sterilization Monitor Hardware">
-            </div>
         </header>
         
         <div class="divider"></div>
@@ -401,15 +447,6 @@
             
             <p>The system demonstrates production-grade embedded design principles applicable to medical devices, industrial control systems, and other safety-critical applications.</p>
         </section>
-
-        <div class="video-container">
-            <video controls poster="assets/thumbnail.jpg">
-                <source src="assets/vid1.mp4" type="video/mp4">
-                <source src="assets/vid2.mp4" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
-            <p class="video-caption">System demonstration: complete sterilization cycle from IDLE to COMPLETE state</p>
-        </div>
         
         <div class="cta">
             <h3>View Project Repository</h3>
