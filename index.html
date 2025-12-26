@@ -3,724 +3,361 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sterilization Cycle Monitor with ESP32-S3</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500&family=Crimson+Pro:wght@300;400;500&display=swap" rel="stylesheet">
+    <title>ESP32 Sterilization Monitor</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --clinical-white: #FAFBFC;
-            --sterile-gray: #E8ECEF;
-            --diagnostic-blue: #4A7C9E;
-            --safe-green: #5A9B7D;
-            --carbon: #2B3440;
-            --shadow-soft: rgba(43, 52, 64, 0.06);
+            --bg-white: #ffffff;
+            --bg-light: #f6f6f6;
+            --border-light: #e2e2e2;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --text-muted: #888888;
+            --shadow-soft: rgba(0, 0, 0, 0.06);
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: 'Crimson Pro', serif;
-            background: var(--clinical-white);
-            color: var(--carbon);
-            line-height: 1.8;
-            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg-white);
+            color: var(--text-primary);
+            line-height: 1.7;
         }
-        
+
         .container {
             max-width: 900px;
             margin: 0 auto;
             padding: 0 2rem;
         }
-        
+
+        /* ---------- Header ---------- */
+
         header {
-            padding: 6rem 0 4rem;
-            animation: fadeIn 0.8s ease-out;
+            padding: 4.5rem 0 2.5rem;
+            animation: fadeIn 0.6s ease-out;
         }
-        
-        .status {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--diagnostic-blue);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .status::before {
-            content: '';
-            width: 6px;
-            height: 6px;
-            background: var(--safe-green);
-            border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-        
+
         h1 {
-            font-size: 3.5rem;
-            font-weight: 400;
-            letter-spacing: -0.03em;
-            margin-bottom: 1rem;
-            color: var(--carbon);
-            line-height: 1.1;
+            font-size: 3rem;
+            font-weight: 500;
+            letter-spacing: -0.025em;
+            line-height: 1.15;
+            margin-bottom: 0.75rem;
         }
-        
+
         .subtitle {
-            font-size: 1.15rem;
-            color: var(--carbon);
-            opacity: 0.7;
-            font-weight: 300;
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            max-width: 720px;
         }
 
-        .header-image {
-            margin-top: 2rem;
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-            max-width: 480px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+        /* ---------- General ---------- */
 
-        .header-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-        }
-
-        .content-image {
-            margin: 2rem auto;
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-            max-width: 480px;
-        }
-
-        .content-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-        }
-
-        .image-caption {
-            margin-top: 0.75rem;
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--diagnostic-blue);
-            text-align: center;
-            opacity: 0.8;
-        }
-
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin: 2rem 0;
-        }
-
-        .image-grid-item {
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-        }
-
-        .image-grid-item img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-        }
-        
-        .divider {
-            height: 1px;
-            background: var(--sterile-gray);
-            margin: 3rem 0;
-        }
-        
         section {
             margin-bottom: 4rem;
-            animation: fadeInUp 0.8s ease-out;
-        }
-        
-        h2 {
-            font-size: 1.75rem;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            color: var(--diagnostic-blue);
-        }
-        
-        p {
-            margin-bottom: 1.25rem;
-            font-size: 1.05rem;
-            opacity: 0.9;
-        }
-        
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 2rem;
-            margin: 2.5rem 0;
-        }
-        
-        .card {
-            padding: 2rem;
-            background: white;
-            border-radius: 1px;
-            border-left: 2px solid var(--diagnostic-blue);
-            box-shadow: 0 1px 4px var(--shadow-soft);
-            transition: all 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow-soft);
-        }
-        
-        .card h3 {
-            font-size: 1rem;
-            font-weight: 500;
-            margin-bottom: 0.75rem;
-            color: var(--carbon);
-        }
-        
-        .card p {
-            font-size: 0.95rem;
-            margin: 0;
-            opacity: 0.75;
+            animation: fadeInUp 0.6s ease-out;
         }
 
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.25rem;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border-light);
+            margin: 3rem 0;
+        }
+
+        /* ---------- Layout Blocks ---------- */
+
+        .concept-layout,
+        .components-layout,
+        .prototype-layout,
+        .state-machine-layout,
         .final-result-layout {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 320px 1fr;
             gap: 3rem;
             align-items: start;
         }
-        
-        .final-result-video {
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-            background: white;
-            padding: 1rem;
-        }
-        
-        .final-result-video video {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-            border-radius: 1px;
-        }
-        
-        .final-result-content p {
-            margin-bottom: 1.25rem;
-        }
-        
+
         @media (max-width: 768px) {
+            .concept-layout,
+            .components-layout,
+            .prototype-layout,
+            .state-machine-layout,
             .final-result-layout {
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
-            
-            .final-result-video {
-                max-width: 350px;
-                margin: 0 auto;
-            }
-        }
-        
-        .state-flow {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.5rem;
-            padding: 2rem;
-            background: white;
-            border-radius: 1px;
-            margin: 2rem 0;
-            flex-wrap: wrap;
-        }
-        
-        .state {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.75rem;
-            padding: 0.6rem 1rem;
-            border: 1.5px solid var(--diagnostic-blue);
-            color: var(--diagnostic-blue);
-            border-radius: 1px;
-            transition: all 0.3s ease;
-        }
-        
-        .state:hover {
-            background: var(--diagnostic-blue);
-            color: white;
-        }
-        
-        .arrow {
-            color: var(--diagnostic-blue);
-            opacity: 0.4;
         }
 
-        .prototype-layout {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 3rem;
-            align-items: start;
-        }
-        
-        .prototype-image {
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-        }
-        
-        .prototype-image img {
+        /* ---------- Media ---------- */
+
+        img, video {
             width: 100%;
             height: auto;
             display: block;
-            border: 1px solid var(--sterile-gray);
-        }
-        
-        .prototype-content p {
-            margin-bottom: 1.25rem;
-        }
-        
-        @media (max-width: 768px) {
-            .prototype-layout {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .prototype-image {
-                max-width: 480px;
-                margin: 0 auto;
-            }
-        }
-        
-        .tech-list {
-            display: grid;
-            gap: 0.75rem;
-            margin: 2rem 0;
-        }
-        
-        .tech-item {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.9rem;
-            padding: 1rem 1.25rem;
-            background: white;
-            border-left: 2px solid var(--safe-green);
-            display: flex;
-            align-items: baseline;
-            gap: 1rem;
-        }
-        
-        .tech-label {
-            color: var(--safe-green);
-            font-weight: 500;
-            min-width: 80px;
-        }
-        
-        .tech-desc {
-            font-family: 'Crimson Pro', serif;
-            color: var(--carbon);
-            opacity: 0.8;
+            border: 1px solid var(--border-light);
+            background: var(--bg-white);
         }
 
-        .video-container {
-            margin: 3rem auto;
-            border-radius: 2px;
+        .media-box {
+            border-radius: 3px;
             overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-            background: white;
-            padding: 1rem;
-            max-width: 480px;
+            box-shadow: 0 6px 18px var(--shadow-soft);
+            background: var(--bg-white);
         }
 
-        .video-container video {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-            border-radius: 1px;
-        }
-
+        .image-caption,
         .video-caption {
-            margin-top: 1rem;
+            margin-top: 0.75rem;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.85rem;
-            color: var(--diagnostic-blue);
-            text-align: center;
-            opacity: 0.8;
-        }
-        
-        .cta {
-            background: var(--carbon);
-            color: white;
-            padding: 3rem 2.5rem;
-            border-radius: 1px;
-            margin: 5rem 0 3rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
             text-align: center;
         }
-        
-        .cta h3 {
-            font-size: 1.5rem;
-            font-weight: 400;
-            margin-bottom: 1.5rem;
-        }
-        
-        .cta-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
             margin-top: 2rem;
         }
-        
-        .btn {
-            font-family: 'IBM Plex Mono', monospace;
-            padding: 0.85rem 1.75rem;
-            border: 1.5px solid white;
-            background: transparent;
-            color: white;
-            text-decoration: none;
-            font-size: 0.8rem;
-            font-weight: 400;
-            transition: all 0.3s ease;
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-        }
-        
-        .btn:hover {
-            background: white;
-            color: var(--carbon);
-        }
-        
-        .btn-primary {
-            background: white;
-            color: var(--carbon);
-        }
-        
-        .btn-primary:hover {
-            background: transparent;
-            color: white;
-        }
 
-        .image-grid-large {
-            grid-column: span 2;
-        }
-        
         @media (max-width: 768px) {
-            .image-grid-large {
-                grid-column: span 1;
-            }
-        }
-
-        .concept-layout {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 3rem;
-            align-items: start;
-        }
-        
-        .header-image-side {
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-        }
-        
-        .header-image-side img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-        }
-        
-        .concept-text p {
-            margin-bottom: 1.25rem;
-        }
-
-        .state-machine-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr;
-            gap: 3rem;
-            align-items: start;
-        }
-        
-        .state-machine-video {
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-            background: white;
-            padding: 1rem;
-        }
-        
-        .state-machine-video video {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-            border-radius: 1px;
-        }
-        
-        .state-machine-content p {
-            margin-bottom: 1.25rem;
-        }
-        
-        @media (max-width: 768px) {
-            .state-machine-layout {
+            .image-grid {
                 grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .state-machine-video {
-                max-width: 350px;
-                margin: 0 auto;
             }
         }
-        
-        @media (max-width: 768px) {
-            .concept-layout {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .header-image-side {
-                max-width: 480px;
-                margin: 0 auto;
-            }
+
+        /* ---------- Footer Notice ---------- */
+
+        .notice {
+            margin: 5rem 0 3rem;
+            padding: 2.5rem;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            text-align: center;
+            font-size: 1rem;
+            color: var(--text-secondary);
+            border-radius: 4px;
         }
-        
+
         footer {
             text-align: center;
             padding: 3rem 0;
             font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.8rem;
-            color: var(--carbon);
-            opacity: 0.4;
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
-        
+
+        /* ---------- Animations ---------- */
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
-                transform: translateY(20px);
+                transform: translateY(16px);
             }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-
-        .components-layout {
-            display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 3rem;
-            align-items: start;
-        }
-        
-        .components-image {
-            border-radius: 2px;
-            overflow: hidden;
-            box-shadow: 0 4px 16px var(--shadow-soft);
-        }
-        
-        .components-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border: 1px solid var(--sterile-gray);
-        }
-        
-        .components-content p {
-            margin-bottom: 1.25rem;
-        }
-        
-        @media (max-width: 768px) {
-            .components-layout {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .components-image {
-                max-width: 480px;
-                margin: 0 auto;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            .state-flow {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .arrow {
-                transform: rotate(90deg);
-                align-self: center;
-            }
-
-            .header-image,
-            .video-container,
-            .content-image {
-                max-width: 100%;
-            }
-        }
     </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <div class="status">Active Development</div>
-            <h1>ESP32 Sterilization Monitor</h1>
-            <p class="subtitle">Medical-grade embedded system demonstrating real-time control, safety interlocks, and deterministic state machine design.</p>
-        </header>
-        
-        <div class="divider"></div>
-        
-        <section>
-            <h2>Project Concept</h2>
-            <div class="concept-layout">
-                <div class="header-image-side">
-                    <img src="assets/img1.jpeg" alt="ESP32 Sterilization Monitor Hardware">
-                </div>
-                <div class="concept-text">
-                    <p>I wanted to build a sterilization cycle controller that demonstrates production-style embedded system design principles used in medical devices. The goal was to create a dual-MCU architecture with proper separation between safety-critical control logic and user interface components—mirroring the fault isolation strategies found in certified medical equipment.</p>
-                    
-                    <p>The system would implement FreeRTOS task management, deterministic state machine control, real environmental sensing, hardware safety interlocks, and UART-based telemetry—all fundamental concepts in safety-critical embedded applications.</p>
-                </div>
-            </div>
-        </section>
-        
-        <div class="divider"></div>
-        
-        <section>
-            <h2>Components</h2>
-            <div class="components-layout">
-                <div class="components-image">
-                    <img src="assets/img2.jpeg" alt="Project components laid out">
-                    <p class="image-caption">All components for the dual-MCU sterilization monitor</p>
-                </div>
-                <div class="components-content">
-                    <p>I started by gathering the components needed for both the controller unit and the user interface subsystem. The controller would handle all safety-critical operations, while a separate ESP32 display module would provide real-time visualization without impacting control performance.</p>
-                    
-                    <p>For the controller, I used an ESP32-S3-WROOM-1 to run the main state machine, handle sensor data, and enforce all safety logic. A separate ESP32-based 2.8" display module acts as the user interface, receiving real-time telemetry over UART so visualization never interferes with control timing. Environmental feedback comes from a BME280 temperature and humidity sensor over I²C, while safety is handled through a normally-closed door interlock switch, a relay module for heater control simulation, status LEDs, and an audible piezo buzzer. A simple momentary push button is used to initiate and control the sterilization cycle.</p>
-                </div>
-            </div>
-        </section>
-        
-        <div class="divider"></div>
-        
-        <section>
-            <h2>Building the Prototype</h2>
-            <div class="prototype-layout">
-                <div class="prototype-image">
-                    <img src="assets/img3.jpeg" alt="First prototype assembly">
-                    <p class="image-caption">Initial breadboard prototype with ESP32-S3 controller</p>
-                </div>
-                <div class="prototype-content">
-                    <p>I assembled the first prototype on a breadboard, connecting the ESP32-S3 to the BME280 sensor over I²C, wiring up the relay module for heater control simulation, and integrating the safety interlock switch. The status LEDs and buzzer were connected to provide immediate visual and audible feedback based on the system state.</p>
-                    
-                    <p>The architecture uses a strict separation of concerns—the controller ESP32-S3 runs all safety-critical tasks including the state machine, sensor reading, interlock monitoring, and output control. Meanwhile, the display ESP32 receives structured telemetry over UART and focuses solely on visualization.</p>
-                </div>
-            </div>
-        </section>
-        
-        <div class="divider"></div>
-        
-        <section>
-            <h2>Testing & Integration</h2>
-            <p>With the hardware assembled, I began developing the firmware using ESP-IDF and FreeRTOS. The controller firmware implements five main tasks with appropriate priority levels: cycle control for the state machine, sensor task for I²C communication, safety handler for interlock monitoring, output control for relay and indicators, and UART telemetry for UI updates.</p>
 
-            <p>The display module required its own firmware to receive and parse the UART telemetry stream. I developed a simple protocol to transmit state, temperature, humidity, and timing information at regular intervals. The display shows the current cycle state, live sensor readings, and elapsed time—providing a clean interface without impacting the controller's real-time performance.</p>
+<body>
+<div class="container">
+
+    <header>
+        <h1>ESP32 Sterilization Monitor</h1>
+        <p class="subtitle">
+            Medical-grade embedded system demonstrating real-time control,
+            safety interlocks, and deterministic state machine design.
+        </p>
+    </header>
+
+    <div class="divider"></div>
+
+    <section>
+        <h2>Project Concept</h2>
+        <div class="concept-layout">
+            <div class="media-box">
+                <img src="assets/img1.jpeg" alt="ESP32 Sterilization Monitor Hardware">
+            </div>
+            <div>
+                <p>
+                    I wanted to build a sterilization cycle controller that demonstrates
+                    production-style embedded system design principles used in medical devices.
+                    The goal was to create a dual-MCU architecture with clear separation between
+                    safety-critical control logic and user interface components.
+                </p>
+                <p>
+                    The system implements FreeRTOS task management, deterministic state-machine
+                    control, real environmental sensing, hardware safety interlocks, and UART-based
+                    telemetry—core concepts in safety-critical embedded applications.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+        <h2>Components</h2>
+        <div class="components-layout">
+            <div class="media-box">
+                <img src="assets/img2.jpeg" alt="Project components laid out">
+                <p class="image-caption">All components for the dual-MCU system</p>
+            </div>
+            <div>
+                <p>
+                    The controller is built around an ESP32-S3-WROOM-1, responsible for running
+                    the state machine, handling sensor input, and enforcing all safety logic.
+                    A separate ESP32-based 2.8" display module acts purely as a user interface,
+                    receiving structured telemetry over UART.
+                </p>
+                <p>
+                    Environmental data is provided by a BME280 temperature and humidity sensor
+                    over I²C. Safety is handled through a normally-closed door interlock switch,
+                    a relay module for heater control simulation, status LEDs, and an audible
+                    piezo buzzer. A single momentary push button is used to initiate and control
+                    the sterilization cycle.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+        <h2>Building the Prototype</h2>
+        <div class="prototype-layout">
+            <div class="media-box">
+                <img src="assets/img3.jpeg" alt="First prototype assembly">
+                <p class="image-caption">Initial breadboard prototype</p>
+            </div>
+            <div>
+                <p>
+                    The first prototype was assembled on a breadboard, connecting the ESP32-S3
+                    to the BME280 sensor via I²C, wiring the relay module for heater simulation,
+                    and integrating the safety interlock switch.
+                </p>
+                <p>
+                    The controller ESP32-S3 runs all safety-critical tasks, while the display
+                    ESP32 focuses exclusively on visualization—ensuring that UI updates never
+                    interfere with real-time control behavior.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+        <h2>Testing & Integration</h2>
+        <p>
+            Firmware was developed using ESP-IDF and FreeRTOS. The controller runs multiple
+            tasks with defined priorities, including cycle control, sensor acquisition,
+            safety monitoring, output control, and UART telemetry.
+        </p>
+        <p>
+            The display firmware parses the telemetry stream and renders the current cycle
+            state, live sensor data, and elapsed time without impacting controller performance.
+        </p>
 
         <div class="image-grid">
-            <div class="image-grid-item image-grid-large">
-                <img src="assets/img6.jpeg" alt="Testing the controller hardware">
-                <p class="image-caption">Building and flashing firmware to display's ESP32</p>
+            <div class="media-box">
+                <img src="assets/img6.jpeg" alt="Controller testing">
+                <p class="image-caption">Flashing and testing controller firmware</p>
             </div>
-            <div class="image-grid-item">
-                <img src="assets/img4.jpeg" alt="Display firmware running">
-                <p class="image-caption">Testing display firmware</p>
-            </div>
-        </div>
-        </section>
-        
-        <div class="divider"></div>
-        
-        <section>
-            <h2>State Machine Implementation</h2>
-            <div class="state-machine-layout">
-                <div class="state-machine-video">
-                    <video controls poster="assets/thumbnail.jpg">
-                        <source src="assets/vid2.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <p class="video-caption">Door interlock emergency stop demonstration during active cycle</p>
-                </div>
-                <div class="state-machine-content">
-                    <p>The core of the controller is a deterministic finite state machine with explicit transitions and comprehensive fault handling. Each state has clear entry and exit conditions, ensuring predictable and auditable behavior throughout the sterilization cycle.</p>
-                    
-                    <p>The sterilization process is driven by a deterministic finite state machine that progresses through a well-defined sequence of operating states. The system begins in an IDLE state, waiting for user initiation, then moves into PRECHECK, where safety conditions and sensor availability are validated. Once all checks pass, the controller enters HEAT-UP to reach the target temperature, followed by STERILIZE, where temperature and timing requirements are actively maintained. After the cycle completes, the system transitions into COOL-DOWN before finally reaching the COMPLETE state, where the cycle ends and the system is ready for the next operation.</p>
-                    
-                    <p>The FAULT state can be entered from any operational state when safety violations are detected—such as door opening during a cycle or sensor communication failures. This defensive approach ensures the system fails safely and provides clear feedback about what went wrong.</p>
-                </div>
-            </div>
-        </section>
-        
-        <div class="divider"></div>
-        
-        <section>
-            <h2>Final Result</h2>
-            <div class="final-result-layout">
-                <div class="final-result-video">
-                    <video controls poster="assets/thumbnail.jpg">
-                        <source src="assets/vid1.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <p class="video-caption">System demonstration: complete sterilization cycle from IDLE to COMPLETE state</p>
-                </div>
-                <div class="final-result-content">
-                    <p>The completed system successfully demonstrates production-grade embedded design principles applicable to medical devices and industrial control systems. It features real-time task scheduling with FreeRTOS, deterministic state machine execution, environmental sensor integration with validation, multi-MCU communication over UART, and hardware-enforced safety interlocks with immediate shutdown capability.</p>
-                    
-                    <p>While the heating profile is simulated in software for safety and repeatability, the system validates live sensor data and provides a realistic foundation for further development. Future enhancements could include MQTT logging, SD card audit trails, OTA firmware updates, and integration with a Linux-based companion system for advanced analytics.</p>
-                </div>
-            </div>
-        </section>
-        
-        <div class="cta">
-            <h3>View Project Repository</h3>
-            <p>Complete source code, documentation, and development history</p>
-            <div class="cta-buttons">
-                <a href="#" class="btn btn-primary">GitHub</a>
-                <a href="#" class="btn">Documentation</a>
+            <div class="media-box">
+                <img src="assets/img4.jpeg" alt="Display firmware">
+                <p class="image-caption">Display firmware running</p>
             </div>
         </div>
-        
-        <footer>
-            ESP32 Sterilization Monitor · Embedded Systems Portfolio
-        </footer>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+        <h2>State Machine Implementation</h2>
+        <div class="state-machine-layout">
+            <div class="media-box">
+                <video controls poster="assets/thumbnail.jpg">
+                    <source src="assets/vid2.mp4" type="video/mp4">
+                </video>
+                <p class="video-caption">Emergency stop via door interlock</p>
+            </div>
+            <div>
+                <p>
+                    The controller is driven by a deterministic finite state machine with
+                    explicit transitions and defensive fault handling. The cycle progresses
+                    through IDLE, PRECHECK, HEAT-UP, STERILIZE, COOL-DOWN, and COMPLETE states.
+                </p>
+                <p>
+                    A FAULT state can be entered from any operational state if safety violations
+                    occur, ensuring the system fails safely and provides clear diagnostic feedback.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <section>
+        <h2>Final Result</h2>
+        <div class="final-result-layout">
+            <div class="media-box">
+                <video controls poster="assets/thumbnail.jpg">
+                    <source src="assets/vid1.mp4" type="video/mp4">
+                </video>
+                <p class="video-caption">Complete sterilization cycle demonstration</p>
+            </div>
+            <div>
+                <p>
+                    The completed system demonstrates production-grade embedded design principles
+                    applicable to medical and industrial control systems, including real-time task
+                    scheduling, deterministic control logic, and hardware-enforced safety interlocks.
+                </p>
+                <p>
+                    The heating profile is simulated for safety, but the system processes live
+                    sensor data and provides a solid foundation for future expansion.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="notice">
+        GitHub repository and documentation coming soon!
     </div>
+
+    <footer>
+        ESP32 Sterilization Monitor · Embedded Systems Portfolio
+    </footer>
+
+</div>
 </body>
 </html>
