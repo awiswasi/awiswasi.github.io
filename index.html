@@ -625,32 +625,7 @@
                 <div class="components-content">
                     <p>I started by gathering the components needed for both the controller unit and the user interface subsystem. The controller would handle all safety-critical operations, while a separate ESP32 display module would provide real-time visualization without impacting control performance.</p>
                     
-                    <div class="tech-list">
-                        <div class="tech-item">
-                            <span class="tech-label">Controller</span>
-                            <span class="tech-desc">ESP32-S3-WROOM-1 for state machine and sensor management</span>
-                        </div>
-                        
-                        <div class="tech-item">
-                            <span class="tech-label">UI Module</span>
-                            <span class="tech-desc">ESP32 2.8" display board for real-time visualization</span>
-                        </div>
-                        
-                        <div class="tech-item">
-                            <span class="tech-label">Sensors</span>
-                            <span class="tech-desc">BME280 I²C temperature and humidity sensor</span>
-                        </div>
-                        
-                        <div class="tech-item">
-                            <span class="tech-label">Safety</span>
-                            <span class="tech-desc">Normally-closed door switch, relay module, status LEDs, piezo buzzer</span>
-                        </div>
-                        
-                        <div class="tech-item">
-                            <span class="tech-label">Control</span>
-                            <span class="tech-desc">Momentary push button for cycle initiation</span>
-                        </div>
-                    </div>
+                    <p>For the controller, I used an ESP32-S3-WROOM-1 to run the main state machine, handle sensor data, and enforce all safety logic. A separate ESP32-based 2.8" display module acts as the user interface, receiving real-time telemetry over UART so visualization never interferes with control timing. Environmental feedback comes from a BME280 temperature and humidity sensor over I²C, while safety is handled through a normally-closed door interlock switch, a relay module for heater control simulation, status LEDs, and an audible piezo buzzer. A simple momentary push button is used to initiate and control the sterilization cycle.</p>
                 </div>
             </div>
         </section>
