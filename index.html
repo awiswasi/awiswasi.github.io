@@ -682,20 +682,8 @@
                 <div class="state-machine-content">
                     <p>The core of the controller is a deterministic finite state machine with explicit transitions and comprehensive fault handling. Each state has clear entry and exit conditions, ensuring predictable and auditable behavior throughout the sterilization cycle.</p>
                     
-                    <div class="state-flow">
-                        <div class="state">IDLE</div>
-                        <span class="arrow">→</span>
-                        <div class="state">PRECHECK</div>
-                        <span class="arrow">→</span>
-                        <div class="state">HEAT-UP</div>
-                        <span class="arrow">→</span>
-                        <div class="state">STERILIZE</div>
-                        <span class="arrow">→</span>
-                        <div class="state">COOL-DOWN</div>
-                        <span class="arrow">→</span>
-                        <div class="state">COMPLETE</div>
-                    </div>
-        
+                    <p>The sterilization process is driven by a deterministic finite state machine that progresses through a well-defined sequence of operating states. The system begins in an IDLE state, waiting for user initiation, then moves into PRECHECK, where safety conditions and sensor availability are validated. Once all checks pass, the controller enters HEAT-UP to reach the target temperature, followed by STERILIZE, where temperature and timing requirements are actively maintained. After the cycle completes, the system transitions into COOL-DOWN before finally reaching the COMPLETE state, where the cycle ends and the system is ready for the next operation.</p>
+                    
                     <p>The FAULT state can be entered from any operational state when safety violations are detected—such as door opening during a cycle or sensor communication failures. This defensive approach ensures the system fails safely and provides clear feedback about what went wrong.</p>
                 </div>
             </div>
